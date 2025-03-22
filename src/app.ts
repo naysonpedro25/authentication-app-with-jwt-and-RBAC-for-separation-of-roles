@@ -1,0 +1,42 @@
+import { fastify } from 'fastify';
+import { routes } from './http/routes';
+import { ZodError } from 'zod';
+import { env } from './env/index';
+import cors from '@fastify/cors';
+import fastifyJwt from '@fastify/jwt';
+import cookie from '@fastify/cookie';
+export const app = fastify();
+
+app.register(cors, {
+    origin: true,
+});
+
+app.register(cookie);
+
+app.register(fastifyJwt, {
+    secret: env.JWT_SECRET,
+    sign: {
+        expiresIn: '15m',
+    },
+    cookie: {
+        cookieName: 'refreshToken',
+        signed: false, // cookie não assinado
+    },
+});
+app.register(routes);
+
+app.setErrorHandler((error, req, reply) => {
+    if (error instanceof ZodError) {
+        return reply
+            .status(400)
+            .send({ message: 'Validate error.', issue: error.format() }); // format só tem no zod
+    }
+
+    if (env.NODE_ENV !== 'production') {
+        console.error(error);
+    } else {
+        // TODO: fazer um log com uma ferramenta externa DataLog/NewRelic/Sentry
+    }
+
+    return reply.status(500).send({ message: 'Internal server error.' });
+});
