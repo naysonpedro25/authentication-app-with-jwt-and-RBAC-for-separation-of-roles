@@ -7,7 +7,9 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
         // se for valido (ou seja não passou 7d com o user inativo)
         const token = await reply.jwtSign(
             // é criado um novo token
-            {},
+            {
+                role: request.user.role,
+            },
             {
                 sign: {
                     sub: request.user.sub, // esse sub é da validação do refresh token anterior
@@ -16,7 +18,9 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
         );
         const refreshToken = await reply.jwtSign(
             // é criado tb um novo refresh token
-            {},
+            {
+                role: request.user.role,
+            },
             {
                 sign: {
                     sub: request.user.sub,

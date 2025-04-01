@@ -3,10 +3,9 @@ import { z } from 'zod';
 
 const envSchema = z.object({
     NODE_ENV: z.enum(['dev', 'production', 'test']),
-    PORT: z.coerce.number().default(3333),
+    PORT: z.coerce.number().default(3000),
     EMAIL_ADDRESS: z.string(),
     EMAIL_PASS: z.string(),
-    REDIS_PASSWORD: z.string(),
     JWT_SECRET: z.string(),
 });
 

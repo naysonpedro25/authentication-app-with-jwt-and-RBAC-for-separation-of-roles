@@ -36,10 +36,10 @@ export async function verifyEmailUser(
                 path: '/',
                 httpOnly: true,
                 sameSite: 'strict',
-                maxAge: 1000 * 60 * 1, // expira em 2 minutos
+                maxAge: 1000 * 60 * 30, // expira em 2 minutos
             })
             .status(200)
-            .send({ message: 'verify your email' });
+            .send({ message: 'verify your email in 30 minutes' });
     } catch (error) {
         if (error instanceof UserAlreadyExistError) {
             return reply.status(409).send({ message: error.message });

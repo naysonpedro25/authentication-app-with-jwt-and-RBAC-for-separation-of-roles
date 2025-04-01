@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "start:dev": "tsx --watch src/server.ts",
+    "start:production": "node build/server.cjs" ,
+    "build": "tsup src/ --out-dir build",
     "test": "vitest run"
   },
   "keywords": [],
@@ -37,6 +39,7 @@
     "dotenv": "^16.4.7",
     "fastify": "^5.2.1",
     "nodemailer": "^6.10.0",
+    "tsup": "^8.4.0",
     "zod": "^3.24.2"
   }
 }
