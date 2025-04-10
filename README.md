@@ -26,6 +26,3 @@
 - [x] Os dados serão persistidos em um banco de dados PostgreSQL
 - [x] A listagem de usuários precisa estar paginadas em 15 itens usuários pagina
 - [x] Os usuários devem ser identificados por um JWT
-
-# é só para uma validação de email para registros de users. Me da uma dica de como que seria essa validação, pois eu não posso mandar o endpoint da api não é? teria que mandar # provavelmente uma rota do meu front, mas ele é um spa sem libs ou freamworks
- 
