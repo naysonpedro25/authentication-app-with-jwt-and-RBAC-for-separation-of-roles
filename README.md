@@ -4,9 +4,7 @@
 - [x] deve ser possível authenticar um usuário existente
 - [x] deve ser possível validar um usuário 
 - [x] deve ser possível adquirir o perfil de um usuário
-- [ ] deve ser possível recuperar a senha de um usuário
-- [ ] deve ser possível atualizar a informação de nome de um usuário logado
-- [x] deve ser possível atualizar a infromação de senha de um usuário logado
+- [x] deve ser possível atualizar a infromação de senha de um usuário 
 - [x] deve ser possível listar usuários
 - [x] deve ser possível deletar um usuário
 
@@ -14,13 +12,14 @@
 
 - [x] O usuário não deve se cadastrar com email duplicado
 - [x] a validação deve ser feita por email no momento do cadastro
-- [ ] Um usuário pode deletar apenas seu própio registro
-- [ ] deve ser preciso a confirmação da senha ao deletar um usuário
-- [ ] Outros usuários podem ser deletado por um administrador do sistema
-- [ ] Deve ser preciso uma confirmação por email para mudar a senha de um usuário
-- [ ] Administradores podem apenas deletar usuários e não modificá-los
-- [ ] Um administrador pode adicionar novos usuários
-
+- [x] Um usuário pode deletar apenas seu própio registro
+- [x] deve ser preciso a confirmação da senha ao deletar um usuário
+- [x] Outros usuários podem ser deletado por um administrador do sistema
+- [ ] Um usuário logado deve fornecer a senha atual para mudar para uma nova
+- [x] Deve ser preciso uma confirmação por email para mudar a senha de um usuário caso ele esqueça
+- [x] Administradores podem apenas deletar usuários e não modificá-los
+- [x] Um administrador pode adicionar novos usuários
+- [x] Se um usuário não for validado ele deve ser excluido do banco de dados (cron-job)
 # Requsitos não Funcionais
 
 - [x] A senha de cada usuário precisa ser criptografada

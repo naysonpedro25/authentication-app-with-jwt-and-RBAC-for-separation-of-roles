@@ -1,14 +1,20 @@
 import { fastify } from 'fastify';
-import { routes } from './http/routes';
+import { routes } from './infra/http/routes';
 import { ZodError } from 'zod';
 import { env } from './env/index';
 import cors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
+import fastifyCron from 'fastify-cron';
+import { makeDeleteUnverifiedUsers } from '@/application/jobs/factories/make-delete-unverified-users';
+
 export const app = fastify();
 
 app.register(cors, {
     origin: true,
+});
+app.register(fastifyCron, {
+    jobs: [makeDeleteUnverifiedUsers()],
 });
 
 app.register(cookie);

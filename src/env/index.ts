@@ -7,6 +7,7 @@ const envSchema = z.object({
     EMAIL_ADDRESS: z.string(),
     EMAIL_PASS: z.string(),
     JWT_SECRET: z.string(),
+    FRONTEND_URL: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);

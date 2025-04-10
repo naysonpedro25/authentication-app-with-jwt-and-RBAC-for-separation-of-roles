@@ -1,0 +1,5 @@
+### GET request to example server
+PATCH localhost:3000/token/refresh
+
+
+###
