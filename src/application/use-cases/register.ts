@@ -3,6 +3,9 @@ import { UserRepositoryInterface } from '@/domain/repositories/user-repository-i
 import { UserAlreadyExistError } from './errors/user-already-exist-error';
 import { hash } from 'bcryptjs';
 import { EmailAlreadySentError } from '@/application/use-cases/errors/email-already-sent-error';
+import { randomUUID } from 'node:crypto';
+import { UnableSendEmailError } from '@/application/use-cases/errors/unable-send-email-error';
+import { EmailService } from '@/domain/services/email-service-interface';
 
 interface RegisterUseCaseRequest {
     name: string;
@@ -15,7 +18,10 @@ interface RegisterUseCaseResponse {
 }
 
 export class RegisterUseCase {
-    constructor(private userRepository: UserRepositoryInterface) {}
+    constructor(
+        private userRepository: UserRepositoryInterface,
+        private emailService: EmailService
+    ) {}
     async execute({
         name,
         email,
@@ -32,11 +38,30 @@ export class RegisterUseCase {
 
         const password_hash = await hash(password, 6);
 
-        const user = await this.userRepository.create({
+        const EXPIRES_AFTER_30_MINUTES = new Date(Date.now() + 1000 * 60 * 30);
+
+        const token = randomUUID();
+
+        const { id } = await this.userRepository.create({
             name,
             email,
             password_hash,
         });
+        const user = await this.userRepository.setVerificationToken(
+            id,
+            token,
+            EXPIRES_AFTER_30_MINUTES
+        );
+
+        try {
+            await this.emailService.sendVerificationEmailForValidate(
+                email,
+                token
+            );
+        } catch (error) {
+            console.error(error);
+            throw new UnableSendEmailError();
+        }
 
         return {
             user,

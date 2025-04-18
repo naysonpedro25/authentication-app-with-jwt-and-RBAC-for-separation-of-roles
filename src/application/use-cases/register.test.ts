@@ -1,20 +1,30 @@
 import { InMemoryUserRepository } from '@/infra/repositories-imp/in-memory-user-repository';
-import { describe, test, beforeEach, expect } from 'vitest';
+import { describe, test, beforeEach, expect, vi } from 'vitest';
 import { RegisterUseCase } from './register';
 import { compare } from 'bcryptjs';
 import { UserAlreadyExistError } from './errors/user-already-exist-error';
+import { EmailService } from '@/domain/services/email-service-interface';
+import { NodeMailerEmailServiceImp } from '@/infra/services/node-mailer-email-service-imp';
 
 // espera-se que: seja possível criar um user,password esteja hasheada, não seja possível criar um 2 usuários com mesmo email,
 
 describe('Register use case', () => {
     let sut: RegisterUseCase;
     let inMemoryRepository: InMemoryUserRepository;
-
+    let emailService: EmailService;
     beforeEach(() => {
         inMemoryRepository = new InMemoryUserRepository();
-        sut = new RegisterUseCase(inMemoryRepository);
+        emailService = {
+            sendVerificationEmailForChangePassword: vi.fn(),
+            sendVerificationEmailForValidate: vi.fn(),
+        };
+        sut = new RegisterUseCase(inMemoryRepository, emailService);
     });
+
     test('should be able regiser a user', async () => {
+        const mockSendVerificationEmail = vi
+            .mocked(emailService.sendVerificationEmailForValidate)
+            .mockResolvedValue(undefined);
         const { user } = await sut.execute({
             name: 'name-test',
             email: 'email-test',
@@ -27,6 +37,11 @@ describe('Register use case', () => {
                 name: 'name-test',
             })
         );
+        expect(mockSendVerificationEmail).toHaveBeenCalledWith(
+            user.email,
+            user.verification_token
+        );
+        expect(user.validated_at).toEqual(null);
     });
 
     test('should be password hashed in the register', async () => {

@@ -1,22 +1,23 @@
 import { FastifyInstance } from 'fastify';
-import { register } from './controllers/register-user';
-import { verifyEmailUser } from './controllers/verify-email-user';
+import { validate } from './controllers/validate';
+import { register } from './controllers/register';
 import { authenticate } from './controllers/authenticate';
 import { profile } from './controllers/profile';
 import { verifyJwt } from './middleware/verify-jwt';
 import { refresh } from './controllers/refresh';
-import { deleteUser } from './controllers/delete-user';
+import { deleteUserByAdm } from './controllers/delete-user-by-adm';
 import { verifyRole } from './middleware/verify-role';
 import { deleteMe } from './controllers/delete-me';
-import { createUser } from './controllers/create-user';
+import { createByAdm } from './controllers/create-by-adm';
 import { verifyForgotPassword } from './controllers/verify-forgot-password';
 import { getList } from '@/infra/http/controllers/get-list';
 import { changePassword } from '@/infra/http/controllers/change-password';
 import { forgotPassword } from '@/infra/http/controllers/forgot-password';
+import { changePasswordByAdm } from './controllers/change-password-by-adm';
 
 export async function routes(app: FastifyInstance) {
-    app.post('/register/verify-email', verifyEmailUser);
     app.post('/register', register);
+    app.patch('/register/validate', validate);
 
     app.post('/auth', authenticate);
     app.patch('/token/refresh', refresh);
@@ -29,7 +30,7 @@ export async function routes(app: FastifyInstance) {
         {
             onRequest: [verifyJwt, verifyRole('ADM')],
         },
-        createUser
+        createByAdm
     );
     app.get(
         '/users/me',
@@ -55,8 +56,16 @@ export async function routes(app: FastifyInstance) {
         changePassword
     );
 
+    app.patch(
+        '/users/:id/change-password',
+        {
+            onRequest: [verifyJwt, verifyRole('ADM')],
+        },
+        changePasswordByAdm
+    );
+
     app.delete(
-        '/me/delete',
+        '/users/me/delete',
         {
             onRequest: [verifyJwt],
         },
@@ -64,10 +73,10 @@ export async function routes(app: FastifyInstance) {
     );
 
     app.delete(
-        '/users/delete/:userId',
+        '/users/:id/delete',
         {
             onRequest: [verifyJwt, verifyRole('ADM')],
         },
-        deleteUser
+        deleteUserByAdm
     );
 }

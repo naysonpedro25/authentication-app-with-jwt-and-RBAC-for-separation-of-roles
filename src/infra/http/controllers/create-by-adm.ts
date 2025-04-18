@@ -4,7 +4,10 @@ import { z } from 'zod';
 import { makeRegisterUseCase } from '@/application/use-cases/factory/make-register-use-case';
 import { EmailAlreadySentError } from '@/application/use-cases/errors/email-already-sent-error';
 
-export async function createUser(request: FastifyRequest, reply: FastifyReply) {
+export async function createByAdm(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
     try {
         const createUserBodySchema = z.object({
             name: z.string(),

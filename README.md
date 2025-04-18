@@ -15,7 +15,7 @@
 - [x] Um usuário pode deletar apenas seu própio registro
 - [x] deve ser preciso a confirmação da senha ao deletar um usuário
 - [x] Outros usuários podem ser deletado por um administrador do sistema
-- [ ] Um usuário logado deve fornecer a senha atual para mudar para uma nova
+- [x] Um usuário logado deve fornecer a senha atual para mudar para uma nova
 - [x] Deve ser preciso uma confirmação por email para mudar a senha de um usuário caso ele esqueça
 - [x] Administradores podem apenas deletar usuários e não modificá-los
 - [x] Um administrador pode adicionar novos usuários

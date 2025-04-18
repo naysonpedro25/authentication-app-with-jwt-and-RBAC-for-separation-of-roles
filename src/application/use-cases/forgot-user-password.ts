@@ -4,9 +4,10 @@ import bcrypt, { hash, compare } from 'bcryptjs';
 import { InvalidCredentials } from './errors/invalid-credentials-error';
 import { ResourceNotFoundError } from './errors/resource-not-found-error';
 import { UserNotValidatedError } from '@/application/use-cases/errors/user-not-validated-error';
+import { VerificationTokenInvalidError } from '@/application/use-cases/errors/verification-token-invalid-error';
 
 interface ForgotUserPasswordUseCaseRequest {
-    email: string;
+    token: string;
     newPassword: string;
 }
 
@@ -17,16 +18,21 @@ interface ForgotUserPasswordUseCaseResponse {
 export class ForgotUserPasswordUseCase {
     constructor(private userRepository: UserRepositoryInterface) {}
     async execute({
-        email,
+        token,
         newPassword,
     }: ForgotUserPasswordUseCaseRequest): Promise<ForgotUserPasswordUseCaseResponse> {
-        const user = await this.userRepository.findByEmail(email);
+        const user = await this.userRepository.findByToken(token);
 
         if (!user) {
-            throw new ResourceNotFoundError();
+            throw new VerificationTokenInvalidError();
         }
         if (!user.validated_at) {
             throw new UserNotValidatedError();
+        }
+        if (!user.verification_token || !user.verification_token_expires_at) {
+            throw new VerificationTokenInvalidError();
+        }
+        if (user.verification_token_expires_at.getTime() < Date.now()) {
         }
         const passwordHash = await bcrypt.hash(newPassword, 6);
         const userWithNewPassword = await this.userRepository.changePassword(

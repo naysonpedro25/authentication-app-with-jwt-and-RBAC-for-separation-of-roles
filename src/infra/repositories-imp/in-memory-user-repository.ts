@@ -12,6 +12,8 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
         id,
         role,
         validated_at,
+        verification_token,
+        verification_token_expires_at,
     }: Prisma.UserCreateInput): Promise<User> {
         const user: User = {
             id: id ?? 'user-id',
@@ -21,6 +23,10 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
             validated_at: validated_at ? new Date() : null,
             role: role ?? 'USER',
             created_at: new Date(),
+            verification_token: verification_token ?? null,
+            verification_token_expires_at: verification_token_expires_at
+                ? new Date()
+                : null,
         };
 
         this.data.push(user);
@@ -57,13 +63,31 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
         this.data[userIndex].password_hash = passwordHash;
         return this.data[userIndex];
     }
-    async validate(email: string, date: Date): Promise<User> {
-        const index = this.data.findIndex((value) => value.email === email);
+    async validate(id: string, date: Date): Promise<User> {
+        const index = this.data.findIndex((value) => value.id === id);
         this.data[index].validated_at = date;
+        this.data[index].verification_token = null;
+        this.data[index].verification_token_expires_at = null;
         return this.data[index];
     }
 
     async deleteUnverified(): Promise<void> {
         this.data.filter((value) => value.validated_at !== null);
+    }
+    async findByToken(token: string): Promise<User | null> {
+        const user = this.data.find(
+            (value) => value.verification_token === token
+        );
+        return user ?? null;
+    }
+    async setVerificationToken(
+        userId: string,
+        token: string,
+        expireAt: Date
+    ): Promise<User> {
+        const index = this.data.findIndex((value) => value.id === userId);
+        this.data[index].verification_token = token;
+        this.data[index].verification_token_expires_at = expireAt;
+        return this.data[index];
     }
 }

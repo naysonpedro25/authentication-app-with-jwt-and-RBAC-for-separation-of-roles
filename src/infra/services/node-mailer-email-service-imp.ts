@@ -27,13 +27,13 @@ export class NodeMailerEmailServiceImp implements EmailService {
         email: string,
         token: string
     ): Promise<void> {
-        const url = `${env.FRONTEND_URL}/session/verify-email?token=${token}&email=${email}`;
+        const url = `${env.FRONTEND_URL}/user-validation?token=${token}`;
         const html = `
             <h1>E-mail de validação de conta </h1>
             <a href="${url}">Click aqui para verificar o seu e-mail e validar sua conta.</a>
         `;
         await this.trasnporter.sendMail({
-            from: this.appName,
+            from: `${this.appName} <${env?.EMAIL_ADDRESS}>`,
             to: email,
             subject: 'Confirme seu e-mail para ativar a conta!',
             html,
@@ -44,7 +44,7 @@ export class NodeMailerEmailServiceImp implements EmailService {
         email: string,
         token: string
     ): Promise<void> {
-        const url = `${env.FRONTEND_URL}/users/me/change-password?token=${token}&email=${email}`;
+        const url = `${env.FRONTEND_URL}/users/me/change-password?token=${token}}`;
         const html = `
             <h1>E-mail de validação de conta </h1>
             <a href="${url}">Click aqui para poder mudar sua senha.</a>

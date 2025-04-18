@@ -58,13 +58,15 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
         });
     }
 
-    async validate(email: string, date: Date): Promise<User> {
+    async validate(id: string, date: Date): Promise<User> {
         return prisma.user.update({
             where: {
-                email,
+                id,
             },
             data: {
                 validated_at: date,
+                verification_token: null,
+                verification_token_expires_at: null,
             },
         });
     }
@@ -76,6 +78,28 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
                 created_at: {
                     lt: new Date(Date.now() - 1000 * 60 * 30),
                 },
+            },
+        });
+    }
+    async findByToken(token: string): Promise<User | null> {
+        return prisma.user.findUnique({
+            where: {
+                verification_token: token,
+            },
+        });
+    }
+    async setVerificationToken(
+        userId: string,
+        token: string,
+        expireAt: Date
+    ): Promise<User> {
+        return prisma.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                verification_token: token,
+                verification_token_expires_at: expireAt,
             },
         });
     }

@@ -7,7 +7,8 @@ import fastifyJwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
 import fastifyCron from 'fastify-cron';
 import { makeDeleteUnverifiedUsers } from '@/application/jobs/factories/make-delete-unverified-users';
-
+import fastifySwaggerUi from '@fastify/swagger-ui';
+import fastifySwagger from '@fastify/swagger';
 export const app = fastify();
 
 app.register(cors, {
@@ -30,13 +31,17 @@ app.register(fastifyJwt, {
     },
 });
 app.register(routes);
-
+app.register(fastifySwagger, {});
+app.register(fastifySwaggerUi, {
+    routePrefix: '/docs',
+});
 app.setErrorHandler((error, req, reply) => {
     if (error instanceof ZodError) {
         return reply
             .status(400)
             .send({ message: 'Validate error.', issue: error.format() }); // format só tem no zod
     }
+    // if(error instanceof )
 
     if (env.NODE_ENV !== 'production') {
         console.error(error);

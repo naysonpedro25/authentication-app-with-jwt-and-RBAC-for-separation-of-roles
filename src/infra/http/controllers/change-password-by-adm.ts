@@ -4,18 +4,19 @@ import { makeChangeUserPasswordUsecCase } from '@/application/use-cases/factory/
 import { InvalidCredentials } from '@/application/use-cases/errors/invalid-credentials-error';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
 
-export async function changePassword(
+export async function changePasswordByAdm(
     request: FastifyRequest,
     reply: FastifyReply
 ) {
     try {
+        const changePasswordParamsSchema = z.object({
+            id: z.string().uuid(),
+        });
         const changePasswordBodySchema = z.object({
             password: z.string(),
             newPassword: z.string(),
         });
-
-        const id = request.user.sub;
-
+        const { id } = changePasswordParamsSchema.parse(request.params);
         const { password, newPassword } = changePasswordBodySchema.parse(
             request.body
         );

@@ -6,7 +6,7 @@ interface GetListUserUseCaseRequest {
 }
 
 interface GetListUserUseCaseResponse {
-    users: Omit<User, 'password_hash' | 'validated_at'>[];
+    users: User[];
 }
 
 export class GetListUserUseCase {
@@ -15,12 +15,9 @@ export class GetListUserUseCase {
         page,
     }: GetListUserUseCaseRequest): Promise<GetListUserUseCaseResponse> {
         const users = await this.userRepository.fetchMany(page);
-        const mappedUsers = users.map(
-            ({ password_hash, validated_at, ...rest }) => rest
-        );
 
         return {
-            users: mappedUsers,
+            users,
         };
     }
 }

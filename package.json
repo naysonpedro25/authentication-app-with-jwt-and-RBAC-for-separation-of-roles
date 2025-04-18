@@ -7,7 +7,14 @@
     "start:dev": "tsx --watch src/server.ts",
     "start:production": "node build/server.cjs",
     "build": "tsup src/ --out-dir build",
-    "test": "vitest run src/application/use-cases"
+    "start": "node build/server.cjs",
+    "test:crete-prisma-environment": "npm link ./prisma/vitest-environment-prisma",
+    "test:install-prisma-environment": "npm link vitest-environment-prisma",
+    "pretest:e2e": "run-s test:crete-prisma-environment test:install-prisma-environment",
+    "test:unit": "vitest run src/application/use-cases",
+    "test:e2e": "vitest run src/infra/http/controllers",
+    "runtest:e2e": "vitest run src/infra/http/controllers",
+    "prisma-studio":"npx run prisma studio"
   },
   "keywords": [],
   "author": "",
@@ -18,13 +25,17 @@
     "@types/bcryptjs": "2.4.6",
     "@types/node": "22.13.10",
     "@types/nodemailer": "6.4.17",
+    "@types/supertest": "6.0.3",
     "@typescript-eslint/parser": "8.22.0",
     "eslint": "9.22.0",
     "eslint-config-prettier": "10.0.1",
     "eslint-plugin-prettier": "5.2.3",
     "globals": "16.0.0",
+    "npm-run-all": "4.1.5",
     "prettier": "3.5.3",
     "prisma": "6.5.0",
+    "supertest": "7.1.0",
+    "tsup": "8.4.0",
     "tsx": "4.19.3",
     "typescript-eslint": "8.26.1",
     "vite-tsconfig-paths": "5.1.4",
@@ -42,7 +53,6 @@
     "fastify": "5.2.1",
     "fastify-cron": "1.4.0",
     "nodemailer": "6.10.0",
-    "tsup": "8.4.0",
     "zod": "3.24.2"
   }
 }

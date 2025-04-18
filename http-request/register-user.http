@@ -1,8 +1,8 @@
-POST http://localhost:3000/register/session
+POST http://localhost:3000/register/verify-email
 Content-Type: application/json
 
 {
   "name" : "nayson123",
-  "email" : "nayson123@gmail.com",
+  "email" : "nayson2123@gmail.com",
   "password" : "test123"
 }

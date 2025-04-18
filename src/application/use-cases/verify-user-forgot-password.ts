@@ -2,8 +2,8 @@ import { UserRepositoryInterface } from '@/domain/repositories/user-repository-i
 import { randomUUID } from 'node:crypto';
 import { UnableSendEmailError } from './errors/unable-send-email-error';
 import { ResourceNotFoundError } from './errors/resource-not-found-error';
-import { UserAlreadyValidatedError } from './errors/user-already-velidated-error';
 import { EmailService } from '@/domain/services/email-service-interface';
+import { UserNotValidatedError } from '@/application/use-cases/errors/user-not-validated-error';
 interface VerifyUserForgotPasswordUseCaseRequest {
     email: string;
 }
@@ -27,10 +27,16 @@ export class VerifyUserForgotPasswordUseCase {
         }
 
         if (!user.validated_at) {
-            throw new ResourceNotFoundError();
+            throw new UserNotValidatedError();
         }
-
+        const EXPIRES_AFTER_30_MINUTES = new Date(Date.now() + 1000 * 60 * 30);
         const token = randomUUID();
+
+        await this.userRepository.setVerificationToken(
+            user.id,
+            token,
+            EXPIRES_AFTER_30_MINUTES
+        );
         try {
             await this.emailService.sendVerificationEmailForChangePassword(
                 email,

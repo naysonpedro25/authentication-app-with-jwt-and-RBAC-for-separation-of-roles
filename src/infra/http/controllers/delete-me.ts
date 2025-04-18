@@ -12,8 +12,8 @@ export async function deleteMe(request: FastifyRequest, reply: FastifyReply) {
         const { password } = deleteBodySchema.parse(request.body);
 
         const deleteUserUseCase = makeDeleteUserUseCase();
-
-        await deleteUserUseCase.execute({ userId: request.user.sub, password });
+        const userId = request.user.sub;
+        await deleteUserUseCase.execute({ userId, password });
 
         return reply.status(200).send();
     } catch (error) {

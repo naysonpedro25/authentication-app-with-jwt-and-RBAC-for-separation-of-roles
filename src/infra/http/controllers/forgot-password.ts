@@ -12,37 +12,23 @@ export async function forgotPassword(
 ) {
     try {
         const forgotPasswordBodySchema = z.object({
-            token: z.string(),
-            email: z.string().email(),
-            newPassword: z.string(),
+            newPassword: z.string().min(8).nonempty(),
+        });
+        const forgotPasswordQuerySchema = z.object({
+            token: z.string().nonempty(),
         });
 
-        const forgotPasswordCookieSchema = z.object({
-            verifyForChangePasswordToken: z.string(),
-        });
-        const { token, email, newPassword } = forgotPasswordBodySchema.parse(
-            request.body
-        );
-
-        const { verifyForChangePasswordToken } =
-            forgotPasswordCookieSchema.parse(request.cookies);
+        const { newPassword } = forgotPasswordBodySchema.parse(request.body);
+        const { token } = forgotPasswordQuerySchema.parse(request.query);
 
         const forgotPasswordUseCase = makeForgotPasswordUseCase();
 
-        if (!verifyForChangePasswordToken) {
-            return reply.status(409).send({ message: 'Verify token expired' });
-        }
-
-        if (!token || token !== verifyForChangePasswordToken) {
-            return reply.status(409).send({ message: 'Invalid verify token' });
-        }
         await forgotPasswordUseCase.execute({
-            email,
+            token,
             newPassword,
         });
 
         return reply
-            .clearCookie('verifyForChangePasswordToken')
             .status(200)
             .send({ message: 'Password changed successfully' });
     } catch (error) {

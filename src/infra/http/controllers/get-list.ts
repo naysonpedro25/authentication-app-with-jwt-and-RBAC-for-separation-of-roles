@@ -14,8 +14,16 @@ export async function getList(request: FastifyRequest, reply: FastifyReply) {
 
         const getListUserUseCase = makeGetListUserUseCase();
         const { users } = await getListUserUseCase.execute({ page });
-
-        return reply.status(200).send({ page, users });
+        const mappedUsers = users.map(
+            ({
+                password_hash,
+                validated_at,
+                verification_token_expires_at,
+                verification_token,
+                ...rest
+            }) => rest
+        );
+        return reply.status(200).send({ page, mappedUsers });
     } catch (error) {
         throw error;
     }

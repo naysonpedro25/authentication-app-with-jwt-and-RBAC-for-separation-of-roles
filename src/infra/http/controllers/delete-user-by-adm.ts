@@ -3,22 +3,25 @@ import { z } from 'zod';
 import { makeDeleteUserUseCase } from '@/application/use-cases/factory/make-delete-user-use-case';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
 import { InvalidCredentials } from '@/application/use-cases/errors/invalid-credentials-error';
-export async function deleteUser(request: FastifyRequest, reply: FastifyReply) {
+export async function deleteUserByAdm(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
     try {
         const deleteBodySchema = z.object({
             password: z.string(),
         });
 
         const deleteParamsSchema = z.object({
-            userId: z.string(),
+            id: z.string(),
         });
 
-        const { userId } = deleteParamsSchema.parse(request.params);
+        const { id } = deleteParamsSchema.parse(request.params);
         const { password } = deleteBodySchema.parse(request.body);
 
         const deleteUserUseCase = makeDeleteUserUseCase();
 
-        await deleteUserUseCase.execute({ userId, password });
+        await deleteUserUseCase.execute({ userId: id, password });
 
         return reply.status(200).send();
     } catch (error) {

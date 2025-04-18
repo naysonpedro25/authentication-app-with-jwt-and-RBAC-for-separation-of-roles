@@ -2,9 +2,10 @@ import { User } from '@prisma/client';
 import { UserRepositoryInterface } from '@/domain/repositories/user-repository-interface';
 import { InvalidCredentials } from './errors/invalid-credentials-error';
 import { UserAlreadyValidatedError } from './errors/user-already-velidated-error';
+import { VerificationTokenInvalidError } from '@/application/use-cases/errors/verification-token-invalid-error';
 
 interface ValidateUserUseCaseRequest {
-    email: string;
+    token: string;
 }
 
 interface ValidateUserUseCaseResponse {
@@ -14,16 +15,27 @@ interface ValidateUserUseCaseResponse {
 export class ValidateUserUseCase {
     constructor(private userRepository: UserRepositoryInterface) {}
     async execute({
-        email,
+        token,
     }: ValidateUserUseCaseRequest): Promise<ValidateUserUseCaseResponse> {
-        const userNotValidated = await this.userRepository.findByEmail(email);
+        const userNotValidated = await this.userRepository.findByToken(token);
+
         if (!userNotValidated) {
-            throw new InvalidCredentials();
+            throw new VerificationTokenInvalidError();
         }
         if (userNotValidated.validated_at) {
             throw new UserAlreadyValidatedError();
         }
-        const user = await this.userRepository.validate(email, new Date());
+        if (
+            !userNotValidated.verification_token_expires_at ||
+            userNotValidated.verification_token_expires_at.getTime() <
+                Date.now()
+        ) {
+            throw new VerificationTokenInvalidError();
+        }
+        const user = await this.userRepository.validate(
+            userNotValidated.id,
+            new Date()
+        );
         return {
             user,
         };

@@ -9,6 +9,7 @@ export function deleteUnverifiedUsers(
         start: true,
         onTick: async () => {
             await userRepository.deleteUnverified();
+            console.log(new Date());
         },
     };
 }
