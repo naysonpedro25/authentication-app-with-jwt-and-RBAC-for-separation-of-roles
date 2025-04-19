@@ -20,12 +20,10 @@ export default <Environment>{
         // executa antes de cada arquivo/suit de test
         const schema = randomUUID();
         const newUrlDb = generateDBURL(schema);
-        console.log(newUrlDb);
         process.env.DATABASE_URL = newUrlDb;
         execSync('npx prisma migrate deploy');
         return {
             async teardown() {
-                console.log(process.env.DATABASE_URL);
                 await prisma.$executeRawUnsafe(
                     `DROP SCHEMA IF EXISTS "${schema} CASCADE"`
                 );

@@ -36,6 +36,9 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
         return prisma.user.findMany({
             take: 15,
             skip: (page - 1) * 15,
+            orderBy: {
+                created_at: 'asc',
+            },
         });
     }
 

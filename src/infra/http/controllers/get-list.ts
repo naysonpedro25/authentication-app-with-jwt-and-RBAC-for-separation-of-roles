@@ -23,7 +23,7 @@ export async function getList(request: FastifyRequest, reply: FastifyReply) {
                 ...rest
             }) => rest
         );
-        return reply.status(200).send({ page, mappedUsers });
+        return reply.status(200).send({ page, users: mappedUsers });
     } catch (error) {
         throw error;
     }
