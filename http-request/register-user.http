@@ -1,8 +1,0 @@
-POST http://localhost:3000/register/verify-email
-Content-Type: application/json
-
-{
-  "name" : "nayson123",
-  "email" : "nayson2123@gmail.com",
-  "password" : "test123"
-}

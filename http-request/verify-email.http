@@ -1,7 +1,0 @@
-POST localhost:3000/register/validate-email
-Content-Type: application/json
-
-{
-  "token": "a11b0bbc-3794-4d17-a1bd-4fd5c307a976",
-  "email": "nayson123@gmail.com"
-}
