@@ -1,4 +1,4 @@
-import { Prisma, User } from '@prisma/client';
+import { Prisma, ROLE, User } from '@prisma/client';
 import { UserRepositoryInterface } from '@/domain/repositories/user-repository-interface';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
 import { InvalidCredentials } from '@/application/use-cases/errors/invalid-credentials-error';
@@ -88,6 +88,11 @@ export class InMemoryUserRepository implements UserRepositoryInterface {
         const index = this.data.findIndex((value) => value.id === userId);
         this.data[index].verification_token = token;
         this.data[index].verification_token_expires_at = expireAt;
+        return this.data[index];
+    }
+    async changeRole(userId: string, role: ROLE): Promise<User> {
+        const index = this.data.findIndex((value) => value.id === userId);
+        this.data[index].role = role;
         return this.data[index];
     }
 }

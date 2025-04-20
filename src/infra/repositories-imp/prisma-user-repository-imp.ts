@@ -1,4 +1,4 @@
-import { Prisma, User } from '@prisma/client';
+import { Prisma, ROLE, User } from '@prisma/client';
 import { UserRepositoryInterface } from '@/domain/repositories/user-repository-interface';
 import { prisma } from '../lib/prisma';
 
@@ -7,12 +7,15 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
         email,
         name,
         password_hash,
+        validated_at,
+        role,
     }: Prisma.UserCreateInput): Promise<User> {
         return prisma.user.create({
             data: {
                 name,
                 email,
                 password_hash,
+                validated_at,
             },
         });
     }
@@ -103,6 +106,16 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
             data: {
                 verification_token: token,
                 verification_token_expires_at: expireAt,
+            },
+        });
+    }
+    async changeRole(userId: string, role: ROLE): Promise<User> {
+        return prisma.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                role,
             },
         });
     }

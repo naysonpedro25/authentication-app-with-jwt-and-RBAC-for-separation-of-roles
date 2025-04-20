@@ -1,26 +1,25 @@
 import { User } from '@prisma/client';
 import { UserRepositoryInterface } from '@/domain/repositories/user-repository-interface';
-import bcrypt, { hash, compare } from 'bcryptjs';
-import { InvalidCredentials } from './errors/invalid-credentials-error';
-import { ResourceNotFoundError } from './errors/resource-not-found-error';
+import bcrypt from 'bcryptjs';
+
 import { UserNotValidatedError } from '@/application/use-cases/errors/user-not-validated-error';
 import { VerificationTokenInvalidError } from '@/application/use-cases/errors/verification-token-invalid-error';
 
-interface ForgotUserPasswordUseCaseRequest {
+interface ResetPasswordUseCaseRequest {
     token: string;
     newPassword: string;
 }
 
-interface ForgotUserPasswordUseCaseResponse {
+interface ResetPasswordUseCaseResponse {
     user: User;
 }
 
-export class ForgotUserPasswordUseCase {
+export class ResetPasswordUseCase {
     constructor(private userRepository: UserRepositoryInterface) {}
     async execute({
         token,
         newPassword,
-    }: ForgotUserPasswordUseCaseRequest): Promise<ForgotUserPasswordUseCaseResponse> {
+    }: ResetPasswordUseCaseRequest): Promise<ResetPasswordUseCaseResponse> {
         const user = await this.userRepository.findByToken(token);
 
         if (!user) {

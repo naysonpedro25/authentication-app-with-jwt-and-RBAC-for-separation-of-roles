@@ -14,7 +14,7 @@
     "test:unit": "vitest run src/application/use-cases",
     "test:e2e": "vitest run src/infra/http/controllers",
     "runtest:e2e": "vitest run src/infra/http/controllers",
-    "prisma-studio":"npx run prisma studio"
+    "prisma-studio": "npx run prisma studio"
   },
   "keywords": [],
   "author": "",
@@ -45,6 +45,7 @@
     "@fastify/cookie": "11.0.2",
     "@fastify/cors": "11.0.0",
     "@fastify/jwt": "9.1.0",
+    "@fastify/rate-limit": "10.2.2",
     "@fastify/swagger": "9.4.2",
     "@fastify/swagger-ui": "5.2.2",
     "@prisma/client": "6.5.0",

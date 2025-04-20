@@ -30,10 +30,11 @@ export class RegisterUseCase {
         const userAlreadyExist = await this.userRepository.findByEmail(email);
 
         if (userAlreadyExist && userAlreadyExist.validated_at) {
-            throw new EmailAlreadySentError();
-        }
-        if (userAlreadyExist) {
             throw new UserAlreadyExistError();
+        }
+
+        if (userAlreadyExist) {
+            throw new EmailAlreadySentError();
         }
 
         const password_hash = await hash(password, 6);

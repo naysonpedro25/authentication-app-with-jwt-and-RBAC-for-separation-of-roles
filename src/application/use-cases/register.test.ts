@@ -5,6 +5,7 @@ import { compare } from 'bcryptjs';
 import { UserAlreadyExistError } from './errors/user-already-exist-error';
 import { EmailService } from '@/domain/services/email-service-interface';
 import { NodeMailerEmailServiceImp } from '@/infra/services/node-mailer-email-service-imp';
+import { EmailAlreadySentError } from './errors/email-already-sent-error';
 
 // espera-se que: seja possível criar um user,password esteja hasheada, não seja possível criar um 2 usuários com mesmo email,
 
@@ -56,10 +57,11 @@ describe('Register use case', () => {
     });
 
     test('should not be able register with same email', async () => {
-        await sut.execute({
+        await inMemoryRepository.create({
             name: 'name-test',
             email: 'email-test',
-            password: '123456',
+            password_hash: '123456',
+            validated_at: new Date(),
         });
 
         await expect(
@@ -69,5 +71,21 @@ describe('Register use case', () => {
                 password: '123456',
             })
         ).rejects.toBeInstanceOf(UserAlreadyExistError);
+    });
+
+    test('should not be able retry register user not validate', async () => {
+        inMemoryRepository.create({
+            name: 'name-test',
+            email: 'email-test',
+            password_hash: '123456',
+        });
+
+        await expect(
+            sut.execute({
+                name: 'name-test',
+                email: 'email-test',
+                password: '123456',
+            })
+        ).rejects.toBeInstanceOf(EmailAlreadySentError);
     });
 });

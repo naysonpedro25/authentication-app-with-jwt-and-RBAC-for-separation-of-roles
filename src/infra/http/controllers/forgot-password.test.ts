@@ -1,18 +1,12 @@
 import { expect, test, describe, beforeAll, afterAll } from 'vitest';
-import request from 'supertest';
 import { app } from '@/app';
-import { beforeEach } from 'node:test';
-import { UserRepositoryInterface } from '@/domain/repositories/user-repository-interface';
-import { PrismaUserRepositoryImp } from '@/infra/repositories-imp/prisma-user-repository-imp';
 import supertest from 'supertest';
+import { PrismaUserRepositoryImp } from '@/infra/repositories-imp/prisma-user-repository-imp';
+import { UserRepositoryInterface } from '@/domain/repositories/user-repository-interface';
 
-function getCookieValue(cookies: string[] | string, name: string) {
-    const cookie = Array.from(cookies).find((c) => c.startsWith(`${name}=`));
-    return cookie?.split(';')[0].split('=')[1];
-}
-
-describe('Authentication user controller', async () => {
+describe('Forgot password controller', async () => {
     let userRepository: UserRepositoryInterface;
+
     beforeAll(async () => {
         await app.ready();
         userRepository = new PrismaUserRepositoryImp();
@@ -22,10 +16,8 @@ describe('Authentication user controller', async () => {
         await app.close();
     });
 
-    beforeEach(() => {});
-
-    test('should be able validate user', async () => {
-        const registerUseCaseResponse = await request(app.server)
+    test('should be able send email vefirication for user', async () => {
+        const registerUseCaseResponse = await supertest(app.server)
             .post('/register')
             .send({
                 name: 'test',
@@ -46,22 +38,18 @@ describe('Authentication user controller', async () => {
         );
         expect(validateResp.status).toEqual(200);
 
-        const resp = await supertest(app.server).post('/auth').send({
-            email: 'test@test.com',
-            password: 'test12345',
-        });
-
-        const cookieRefreshToken = getCookieValue(
-            resp.headers['set-cookie'],
-            'refreshToken'
-        );
+        const resp = await supertest(app.server)
+            .post('/auth/forgot-password')
+            .send({
+                email: 'test@test.com',
+            });
 
         expect(resp.status).toEqual(200);
+
         expect(resp.body).toEqual(
             expect.objectContaining({
-                token: expect.any(String),
+                message: expect.any(String),
             })
         );
-        expect(cookieRefreshToken).toEqual(expect.any(String));
     });
 });

@@ -4,22 +4,22 @@ import { UnableSendEmailError } from './errors/unable-send-email-error';
 import { ResourceNotFoundError } from './errors/resource-not-found-error';
 import { EmailService } from '@/domain/services/email-service-interface';
 import { UserNotValidatedError } from '@/application/use-cases/errors/user-not-validated-error';
-interface VerifyUserForgotPasswordUseCaseRequest {
+interface ForgotPasswordUseCaseRequest {
     email: string;
 }
 
-interface VerifyUserForgotPasswordUseCaseResponse {
+interface ForgotPasswordUseCaseResponse {
     token: string;
 }
 
-export class VerifyUserForgotPasswordUseCase {
+export class ForgotPasswordUseCase {
     constructor(
         private userRepository: UserRepositoryInterface,
         private emailService: EmailService
     ) {}
     async execute({
         email,
-    }: VerifyUserForgotPasswordUseCaseRequest): Promise<VerifyUserForgotPasswordUseCaseResponse> {
+    }: ForgotPasswordUseCaseRequest): Promise<ForgotPasswordUseCaseResponse> {
         const user = await this.userRepository.findByEmail(email);
 
         if (!user) {

@@ -46,22 +46,33 @@ describe('Authentication user controller', async () => {
         );
         expect(validateResp.status).toEqual(200);
 
-        const resp = await supertest(app.server).post('/auth').send({
+        const respAuth = await supertest(app.server).post('/auth').send({
             email: 'test@test.com',
             password: 'test12345',
         });
 
         const cookieRefreshToken = getCookieValue(
-            resp.headers['set-cookie'],
+            respAuth.headers['set-cookie'],
             'refreshToken'
         );
 
-        expect(resp.status).toEqual(200);
-        expect(resp.body).toEqual(
+        expect(respAuth.status).toEqual(200);
+        expect(respAuth.body).toEqual(
             expect.objectContaining({
                 token: expect.any(String),
             })
         );
         expect(cookieRefreshToken).toEqual(expect.any(String));
+
+        const resp = await supertest(app.server)
+            .patch('/auth/logout')
+            .set('Authorization', `Bearer ${respAuth.body.token}`)
+            .send();
+        const cookiesWasItDeleted = getCookieValue(
+            resp.headers['set-cookie'],
+            'refreshToken'
+        );
+        expect(resp.status).toEqual(200);
+        expect(cookiesWasItDeleted).toBeFalsy();
     });
 });

@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { object, z } from 'zod';
-import { makeChangeUserPasswordUsecCase } from '@/application/use-cases/factory/make-change-user-password-use-case';
+import { z } from 'zod';
+import { makeChangeUserPasswordByAdmUsecCase } from '@/application/use-cases/factory/make-change-user-password-by-adm-use-case';
 import { InvalidCredentials } from '@/application/use-cases/errors/invalid-credentials-error';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
 
@@ -13,17 +13,13 @@ export async function changePasswordByAdm(
             id: z.string().uuid(),
         });
         const changePasswordBodySchema = z.object({
-            password: z.string(),
             newPassword: z.string(),
         });
         const { id } = changePasswordParamsSchema.parse(request.params);
-        const { password, newPassword } = changePasswordBodySchema.parse(
-            request.body
-        );
+        const { newPassword } = changePasswordBodySchema.parse(request.body);
 
-        const changePasswordUseCase = makeChangeUserPasswordUsecCase();
+        const changePasswordUseCase = makeChangeUserPasswordByAdmUsecCase();
         await changePasswordUseCase.execute({
-            password,
             newPassword,
             userId: id,
         });

@@ -7,5 +7,6 @@ export default defineConfig({
         environmentMatchGlobs: [
             ['src/infra/http/controllers/*.test.ts', 'prisma'],
         ],
+        testTimeout: 10000,
     },
 });

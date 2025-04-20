@@ -1,4 +1,4 @@
-import { Prisma, User } from '@prisma/client';
+import { Prisma, ROLE, User } from '@prisma/client';
 
 export interface UserRepositoryInterface {
     create(user: Prisma.UserCreateInput): Promise<User>;
@@ -15,4 +15,5 @@ export interface UserRepositoryInterface {
         token: string,
         expireAt: Date
     ): Promise<User>;
+    changeRole(userId: string, role: ROLE): Promise<User>;
 }

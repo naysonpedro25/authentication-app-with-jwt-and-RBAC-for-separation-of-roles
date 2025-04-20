@@ -1,7 +1,7 @@
 import { describe, test, beforeEach, expect } from 'vitest';
 import { compare, hash } from 'bcryptjs';
 import { InMemoryUserRepository } from '@/infra/repositories-imp/in-memory-user-repository';
-import { ForgotUserPasswordUseCase } from '@/application/use-cases/forgot-user-password';
+import { ResetPasswordUseCase } from '@/application/use-cases/reset-password';
 import { ResourceNotFoundError } from '@/application/use-cases/errors/resource-not-found-error';
 import { UserNotValidatedError } from '@/application/use-cases/errors/user-not-validated-error';
 import { randomUUID } from 'crypto';
@@ -9,12 +9,12 @@ import { VerificationTokenInvalidError } from './errors/verification-token-inval
 // espera-se que: seja possível criar um user,password esteja hasheada, não seja possível criar um 2 usuários com mesmo email,
 
 describe('Forgot user password use case', () => {
-    let sut: ForgotUserPasswordUseCase;
+    let sut: ResetPasswordUseCase;
     let inMemoryRepository: InMemoryUserRepository;
 
     beforeEach(() => {
         inMemoryRepository = new InMemoryUserRepository();
-        sut = new ForgotUserPasswordUseCase(inMemoryRepository);
+        sut = new ResetPasswordUseCase(inMemoryRepository);
     });
     test('should be able reset user password', async () => {
         const { id, password_hash } = await inMemoryRepository.create({

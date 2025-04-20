@@ -1,6 +1,6 @@
 import { UserAlreadyExistError } from '@/application/use-cases/errors/user-already-exist-error';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { makeVerifyUserByEmailUseCase } from '@/application/use-cases/factory/make-verify-user-by-email';
+
 import { z } from 'zod';
 import { makeRegisterUseCase } from '@/application/use-cases/factory/make-register-use-case';
 
