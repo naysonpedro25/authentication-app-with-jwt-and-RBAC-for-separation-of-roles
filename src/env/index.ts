@@ -8,6 +8,8 @@ const envSchema = z.object({
     EMAIL_PASS: z.string(),
     JWT_SECRET: z.string(),
     FRONTEND_URL: z.string(),
+    RESEND_EMAIL_SERVICE_API_KEY: z.string(),
+    EMAIL_DOMAIN: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);

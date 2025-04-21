@@ -8,8 +8,11 @@ export function deleteUnverifiedUsers(
         cronTime: '*/5 * * * *',
         start: true,
         onTick: async () => {
-            await userRepository.deleteUnverified();
-            console.log(new Date());
+            try {
+                await userRepository.deleteUnverified();
+            } catch (error) {
+                console.error(error);
+            }
         },
     };
 }

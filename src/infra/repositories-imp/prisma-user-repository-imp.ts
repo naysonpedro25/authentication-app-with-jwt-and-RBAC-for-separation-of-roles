@@ -8,7 +8,6 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
         name,
         password_hash,
         validated_at,
-        role,
     }: Prisma.UserCreateInput): Promise<User> {
         return prisma.user.create({
             data: {

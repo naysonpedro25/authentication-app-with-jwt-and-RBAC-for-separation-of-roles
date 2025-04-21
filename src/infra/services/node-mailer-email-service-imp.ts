@@ -4,7 +4,7 @@ import { EmailService } from '@/domain/services/email-service-interface';
 
 export class NodeMailerEmailServiceImp implements EmailService {
     private trasnporter: Transporter;
-    private readonly appName = 'Gerenciador de usuários';
+    private readonly appName = `Gerenciador de usuários <noreplay@${env.EMAIL_DOMAIN}>`;
     constructor() {
         if (env.NODE_ENV === 'production') {
             this.trasnporter = createTransport({

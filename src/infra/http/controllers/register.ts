@@ -3,6 +3,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { z } from 'zod';
 import { makeRegisterUseCase } from '@/application/use-cases/factory/make-register-use-case';
+import { EmailAlreadySentError } from '@/application/use-cases/errors/email-already-sent-error';
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
     try {
@@ -31,6 +32,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
         if (error instanceof UserAlreadyExistError) {
             return reply.status(409).send({ message: error.message });
         }
+        if (error instanceof EmailAlreadySentError) {
+            return reply.status(400).send({ message: error.message });
+        }
+
         throw error;
     }
 }

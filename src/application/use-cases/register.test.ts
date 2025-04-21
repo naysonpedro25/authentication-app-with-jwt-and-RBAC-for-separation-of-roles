@@ -4,7 +4,6 @@ import { RegisterUseCase } from './register';
 import { compare } from 'bcryptjs';
 import { UserAlreadyExistError } from './errors/user-already-exist-error';
 import { EmailService } from '@/domain/services/email-service-interface';
-import { NodeMailerEmailServiceImp } from '@/infra/services/node-mailer-email-service-imp';
 import { EmailAlreadySentError } from './errors/email-already-sent-error';
 
 // espera-se que: seja possível criar um user,password esteja hasheada, não seja possível criar um 2 usuários com mesmo email,
