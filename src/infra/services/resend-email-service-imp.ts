@@ -14,7 +14,7 @@ export class ResendEmailService implements EmailService {
         email: string,
         token: string
     ): Promise<void | SentMessageInfo> {
-        const url = `${env.FRONTEND_URL}/users/me/change-password?token=${token}}`;
+        const url = `${env.FRONTEND_URL}/register/forgot-password/change-password?token=${token}`;
         const html = `
                     <h1>E-mail de validação de conta </h1>
                     <a href="${url}">Click aqui para poder mudar sua senha.</a>
@@ -26,24 +26,23 @@ export class ResendEmailService implements EmailService {
             subject: 'Mude sua senha com segurança!',
             html,
         });
+        if (error) throw error;
     }
     async sendVerificationEmailForValidate(
         email: string,
         token: string
     ): Promise<void | SentMessageInfo> {
-        const url = `${env.FRONTEND_URL}/users/me/change-password?token=${token}}`;
+        const url = `${env.FRONTEND_URL}/register/email-validated?token=${token}`;
         const html = `
             <h1>E-mail de validação de conta </h1>
-            <a href="${url}">Click aqui para poder mudar sua senha.</a>
+            <a href="${url}">Click aqui para poder validar su conta.</a>
         `;
         const { data, error } = await this.resend.emails.send({
             from: this.appName,
             to: email,
-            subject: 'Mude sua senha com segurança!',
+            subject: 'Comfirme seu e-mail para ativar a conta!',
             html,
         });
-
-        console.log({ data, error });
 
         if (error) throw error;
     }

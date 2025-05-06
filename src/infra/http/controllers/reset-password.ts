@@ -9,7 +9,7 @@ export async function resetPassword(
 ) {
     try {
         const resetPasswordBodySchema = z.object({
-            newPassword: z.string().min(8).nonempty(),
+            newPassword: z.string().min(6).nonempty(),
         });
         const resetPasswordQuerySchema = z.object({
             token: z.string().nonempty(),

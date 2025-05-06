@@ -10,9 +10,9 @@ export async function createByAdm(
 ) {
     try {
         const createUserBodySchema = z.object({
-            name: z.string(),
+            name: z.string().max(20),
             email: z.string().email(),
-            password: z.string(),
+            password: z.string().min(6),
         });
 
         const { email, name, password } = createUserBodySchema.parse(

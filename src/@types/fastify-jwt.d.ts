@@ -8,6 +8,7 @@ declare module '@fastify/jwt' {
         user: {
             sub: string;
             role: ROLE;
+            type: 'access' | 'refresh';
         }; // user type is return type of `request.user` object
     }
 }

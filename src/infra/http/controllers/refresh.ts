@@ -4,10 +4,12 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
     try {
         await request.jwtVerify({ onlyCookie: true }); // vai verificar apenas o jwt do cookie, ou seja o refresh token
         // se for valido (ou seja não passou 7d com o user inativo)
+
         const token = await reply.jwtSign(
             // é criado um novo token
             {
                 role: request.user.role,
+                type: 'access',
             },
             {
                 sign: {
@@ -19,6 +21,7 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
             // é criado tb um novo refresh token
             {
                 role: request.user.role,
+                type: 'refresh',
             },
             {
                 sign: {

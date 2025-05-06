@@ -11,7 +11,7 @@ export async function changePassword(
     try {
         const changePasswordBodySchema = z.object({
             password: z.string(),
-            newPassword: z.string(),
+            newPassword: z.string().min(6),
         });
 
         const id = request.user.sub;

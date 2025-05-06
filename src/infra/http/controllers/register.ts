@@ -4,13 +4,14 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { makeRegisterUseCase } from '@/application/use-cases/factory/make-register-use-case';
 import { EmailAlreadySentError } from '@/application/use-cases/errors/email-already-sent-error';
+import { UnableSendEmailError } from '@/application/use-cases/errors/unable-send-email-error';
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
     try {
         const registerBodySchema = z.object({
             name: z.string().max(20),
             email: z.string().email(),
-            password: z.string().min(8),
+            password: z.string().min(6),
         });
 
         const { name, email, password } = registerBodySchema.parse(
@@ -33,7 +34,10 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
             return reply.status(409).send({ message: error.message });
         }
         if (error instanceof EmailAlreadySentError) {
-            return reply.status(400).send({ message: error.message });
+            return reply.status(409).send({ message: error.message });
+        }
+        if (error instanceof UnableSendEmailError) {
+            return reply.status(409).send({ message: error.message });
         }
 
         throw error;

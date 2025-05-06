@@ -37,11 +37,21 @@ export class RegisterUseCase {
             throw new EmailAlreadySentError();
         }
 
+        const token = randomUUID();
+
+        try {
+            await this.emailService.sendVerificationEmailForValidate(
+                email,
+                token
+            );
+        } catch (error) {
+            console.error(error);
+            throw new UnableSendEmailError();
+        }
+
         const password_hash = await hash(password, 6);
 
         const EXPIRES_AFTER_30_MINUTES = new Date(Date.now() + 1000 * 60 * 30);
-
-        const token = randomUUID();
 
         const { id } = await this.userRepository.create({
             name,
@@ -53,16 +63,6 @@ export class RegisterUseCase {
             token,
             EXPIRES_AFTER_30_MINUTES
         );
-
-        try {
-            await this.emailService.sendVerificationEmailForValidate(
-                email,
-                token
-            );
-        } catch (error) {
-            console.error(error);
-            throw new UnableSendEmailError();
-        }
 
         return {
             user,

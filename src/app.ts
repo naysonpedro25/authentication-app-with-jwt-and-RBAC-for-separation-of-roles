@@ -10,34 +10,51 @@ import { makeDeleteUnverifiedUsers } from '@/application/jobs/factories/make-del
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import fastifySwagger from '@fastify/swagger';
 import fastifyRateLimit from '@fastify/rate-limit';
+import {
+    validatorCompiler,
+    serializerCompiler,
+    ZodTypeProvider,
+    jsonSchemaTransform,
+} from 'fastify-type-provider-zod';
 
-export const app = fastify();
+export const app = fastify().withTypeProvider<ZodTypeProvider>();
+
+// usar zod para fazer a validação dados de entrada e a serialização dos dados de saida
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
 app.register(cors, {
     origin: [env.FRONTEND_URL, 'http:localhost:8080'],
     credentials: true, // permite o envio de cookies do front para o back
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 });
 app.register(fastifyCron, {
     jobs: [makeDeleteUnverifiedUsers()],
 });
 
-app.register(cookie);
-
 app.register(fastifyJwt, {
     secret: env.JWT_SECRET,
+    cookie: {
+        cookieName: 'refreshToken',
+        signed: false,
+    },
     sign: {
         expiresIn: '15m',
     },
-    cookie: {
-        cookieName: 'refreshToken',
-        signed: false, // cookie não assinado
+});
+app.register(fastifySwagger, {
+    openapi: {
+        info: {
+            title: 'User manager API',
+            version: '1.0.0',
+        },
     },
+    transform: jsonSchemaTransform,
 });
+
+app.register(cookie);
+
 app.register(routes);
-app.register(fastifySwagger, {});
-app.register(fastifySwaggerUi, {
-    routePrefix: '/docs',
-});
 
 await (async () => {
     await app.register(fastifyRateLimit, {
@@ -68,6 +85,10 @@ await (async () => {
         }
     );
 })();
+
+app.register(fastifySwaggerUi, {
+    routePrefix: '/docs',
+});
 
 app.setErrorHandler((error, req, reply) => {
     if (error instanceof ZodError) {
