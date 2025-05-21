@@ -8,6 +8,7 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
         name,
         password_hash,
         validated_at,
+        role = 'USER',
     }: Prisma.UserCreateInput): Promise<User> {
         return prisma.user.create({
             data: {
@@ -15,6 +16,7 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
                 email,
                 password_hash,
                 validated_at,
+                role,
             },
         });
     }
@@ -70,8 +72,6 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
             },
             data: {
                 validated_at: date,
-                verification_token: null,
-                verification_token_expires_at: null,
             },
         });
     }
@@ -117,5 +117,19 @@ export class PrismaUserRepositoryImp implements UserRepositoryInterface {
                 role,
             },
         });
+    }
+    async clearVerificationToken(userId: string): Promise<User> {
+        return prisma.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                verification_token: null,
+                verification_token_expires_at: null,
+            },
+        });
+    }
+    async fetchAllLength(): Promise<number> {
+        return prisma.user.count();
     }
 }

@@ -24,7 +24,7 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 
 app.register(cors, {
-    origin: [env.FRONTEND_URL, 'http:localhost:8080'],
+    origin: [env.FRONTEND_URL, 'http://192.168.1.16:8080'],
     credentials: true, // permite o envio de cookies do front para o back
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 });
@@ -55,37 +55,37 @@ app.register(fastifySwagger, {
 app.register(cookie);
 
 app.register(routes);
-
-await (async () => {
-    await app.register(fastifyRateLimit, {
-        global: true,
-        max: 100,
-        timeWindow: 1000 * 60,
-        errorResponseBuilder: function (req, context) {
-            return {
-                statusCode: 429,
-                message: 'You are doing that too much. Chill a bit!',
-                max: context.max,
-                timeWindow: context.after,
-            };
-        },
-    });
-    app.setNotFoundHandler(
-        // o handler do 404 depende do plugin assim já ter sido carregado
-        {
-            preHandler: app.rateLimit({
-                max: 5,
-                timeWindow: 500,
-            }),
-        },
-        function (req, reply) {
-            reply
-                .code(404)
-                .send({ message: `route ${req.method}${req.url} not found.` });
-        }
-    );
-})();
-
+if (env.NODE_ENV !== 'test') {
+    await (async () => {
+        await app.register(fastifyRateLimit, {
+            global: true,
+            max: 100,
+            timeWindow: 1000 * 60,
+            errorResponseBuilder: function (req, context) {
+                return {
+                    statusCode: 429,
+                    message: 'You are doing that too much. Chill a bit!',
+                    max: context.max,
+                    timeWindow: context.after,
+                };
+            },
+        });
+        app.setNotFoundHandler(
+            // o handler do 404 depende do plugin assim já ter sido carregado
+            {
+                preHandler: app.rateLimit({
+                    max: 5,
+                    timeWindow: 500,
+                }),
+            },
+            function (req, reply) {
+                reply.code(404).send({
+                    message: `route ${req.method}${req.url} not found.`,
+                });
+            }
+        );
+    })();
+}
 app.register(fastifySwaggerUi, {
     routePrefix: '/docs',
 });

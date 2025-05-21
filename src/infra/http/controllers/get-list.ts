@@ -13,7 +13,8 @@ export async function getList(request: FastifyRequest, reply: FastifyReply) {
         const { page } = getListQuerySchema.parse(request.query);
 
         const getListUserUseCase = makeGetListUserUseCase();
-        const { users } = await getListUserUseCase.execute({ page });
+        const { users, length } = await getListUserUseCase.execute({ page });
+
         const mappedUsers = users.map(
             ({
                 password_hash,
@@ -23,7 +24,8 @@ export async function getList(request: FastifyRequest, reply: FastifyReply) {
                 ...rest
             }) => rest
         );
-        return reply.status(200).send({ page, users: mappedUsers });
+
+        return reply.status(200).send({ page, length, users: mappedUsers });
     } catch (error) {
         throw error;
     }

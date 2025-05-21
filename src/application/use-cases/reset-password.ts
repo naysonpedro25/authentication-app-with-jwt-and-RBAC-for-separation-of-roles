@@ -20,26 +20,36 @@ export class ResetPasswordUseCase {
         token,
         newPassword,
     }: ResetPasswordUseCaseRequest): Promise<ResetPasswordUseCaseResponse> {
-        const user = await this.userRepository.findByToken(token);
+        const userForResetPassword =
+            await this.userRepository.findByToken(token);
 
-        if (!user) {
+        if (!userForResetPassword) {
             throw new VerificationTokenInvalidError();
         }
-        if (!user.validated_at) {
+        if (!userForResetPassword.validated_at) {
             throw new UserNotValidatedError();
         }
-        if (!user.verification_token || !user.verification_token_expires_at) {
+        if (
+            !userForResetPassword.verification_token ||
+            !userForResetPassword.verification_token_expires_at
+        ) {
             throw new VerificationTokenInvalidError();
         }
-        if (user.verification_token_expires_at.getTime() < Date.now()) {
+        if (
+            userForResetPassword.verification_token_expires_at.getTime() <
+            Date.now()
+        ) {
         }
         const passwordHash = await bcrypt.hash(newPassword, 6);
-        const userWithNewPassword = await this.userRepository.changePassword(
-            user.id,
+        await this.userRepository.changePassword(
+            userForResetPassword.id,
             passwordHash
         );
+        const user = await this.userRepository.clearVerificationToken(
+            userForResetPassword.id
+        );
         return {
-            user: userWithNewPassword,
+            user,
         };
     }
 }

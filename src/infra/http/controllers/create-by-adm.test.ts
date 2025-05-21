@@ -23,13 +23,13 @@ describe('Create user by adm controller', async () => {
     test('should be able create user with id', async () => {
         const user = await userRepository.create({
             name: 'test',
-            email: 'test@test.com',
+            email: 'delivered@resend.dev',
             password_hash: await hash('test12345', 6),
             validated_at: new Date(),
         });
         await userRepository.changeRole(user.id, 'ADM');
         const authResponse = await supertest(app.server).post('/auth').send({
-            email: 'test@test.com',
+            email: 'delivered@resend.dev',
             password: 'test12345',
         });
 
@@ -40,6 +40,7 @@ describe('Create user by adm controller', async () => {
                 name: 'new-test-user',
                 email: 'new-test-user@gmail.com',
                 password: 'new-test-user-password',
+                role: 'USER',
             });
 
         expect(resp.status).toEqual(201);

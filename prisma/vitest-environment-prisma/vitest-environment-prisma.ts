@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import * as process from 'node:process';
 import { execSync } from 'node:child_process';
 import { prisma } from '@/infra/lib/prisma';
+import { env } from '@/env';
 function generateDBURL(schema: string) {
     if (!process.env.DATABASE_URL) {
         throw new Error();
@@ -21,6 +22,7 @@ export default <Environment>{
         const schema = randomUUID();
         const newUrlDb = generateDBURL(schema);
         process.env.DATABASE_URL = newUrlDb;
+
         execSync('npx prisma migrate deploy');
         return {
             async teardown() {

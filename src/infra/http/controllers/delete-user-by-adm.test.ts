@@ -29,7 +29,7 @@ describe('Delete user by adm controller', async () => {
             .post('/register')
             .send({
                 name: 'test',
-                email: 'test@test.com',
+                email: 'delivered@resend.dev',
                 password: 'test12345',
             });
         expect(registerUseCaseResponse.status).toEqual(201);
@@ -38,7 +38,7 @@ describe('Delete user by adm controller', async () => {
                 message: expect.any(String),
             })
         );
-        const user = await userRepository.findByEmail('test@test.com');
+        const user = await userRepository.findByEmail('delivered@resend.dev');
         expect(user).not.toEqual(null);
         await userRepository.changeRole(user?.id ?? '', 'ADM');
 
@@ -48,7 +48,7 @@ describe('Delete user by adm controller', async () => {
         expect(validateResp.status).toEqual(200);
 
         const authResponse = await supertest(app.server).post('/auth').send({
-            email: 'test@test.com',
+            email: 'delivered@resend.dev',
             password: 'test12345',
         });
 

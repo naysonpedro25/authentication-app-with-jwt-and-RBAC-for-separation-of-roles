@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 import { UserRepositoryInterface } from '@/domain/repositories/user-repository-interface';
-import { InvalidCredentials } from './errors/invalid-credentials-error';
+
 import { UserAlreadyValidatedError } from './errors/user-already-velidated-error';
 import { VerificationTokenInvalidError } from '@/application/use-cases/errors/verification-token-invalid-error';
 
@@ -32,9 +32,9 @@ export class ValidateUserUseCase {
         ) {
             throw new VerificationTokenInvalidError();
         }
-        const user = await this.userRepository.validate(
-            userNotValidated.id,
-            new Date()
+        await this.userRepository.validate(userNotValidated.id, new Date());
+        const user = await this.userRepository.clearVerificationToken(
+            userNotValidated.id
         );
         return {
             user,

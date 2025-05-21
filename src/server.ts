@@ -1,5 +1,5 @@
 import { app } from './app';
-import { makeRegisterUseCase } from './application/use-cases/factory/make-register-use-case';
+import { makeCreateUserByAdmUseCase } from './application/use-cases/factory/make-create-user-by-adm-use-case';
 import { env } from './env';
 
 app.listen({
@@ -7,11 +7,11 @@ app.listen({
     port: env.PORT,
 }).then(async (addrs) => {
     console.log(addrs);
-    // const registerUseCase = makeRegisterUseCase();
+    // const registerUseCase = makeCreateUserByAdmUseCase();
     // for (let i = 1; i <= 23; i++) {
     //     await registerUseCase.execute({
-    //         name: 'test-namekk' + i,
-    //         email: `email-testkk${i}@gmail.com`,
+    //         name: 'test0102030304' + i,
+    //         email: `emailfff-testkk${i}@gmail.com`,
     //         password: 'test123456',
     //     });
     // }

@@ -10,6 +10,8 @@ const envSchema = z.object({
     FRONTEND_URL: z.string(),
     RESEND_EMAIL_SERVICE_API_KEY: z.string(),
     EMAIL_DOMAIN: z.string(),
+    EMAIL_VALIDATION_URL: z.string().url(),
+    EMAIL_RESET_PASSWORD_URL: z.string().url(),
 });
 
 const _env = envSchema.safeParse(process.env);

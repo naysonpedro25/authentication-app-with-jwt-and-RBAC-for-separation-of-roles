@@ -36,7 +36,7 @@ describe('Get list users controller', async () => {
             .post('/register')
             .send({
                 name: 'test',
-                email: 'test@test.com',
+                email: 'delivered@resend.dev',
                 password: 'test12345',
             });
         expect(registerUseCaseResponse.status).toEqual(201);
@@ -45,7 +45,7 @@ describe('Get list users controller', async () => {
                 message: expect.any(String),
             })
         );
-        const user = await userRepository.findByEmail('test@test.com');
+        const user = await userRepository.findByEmail('delivered@resend.dev');
         expect(user).not.toEqual(null);
 
         const validateResp = await supertest(app.server).patch(
@@ -54,7 +54,7 @@ describe('Get list users controller', async () => {
         expect(validateResp.status).toEqual(200);
 
         const authResponse = await supertest(app.server).post('/auth').send({
-            email: 'test@test.com',
+            email: 'delivered@resend.dev',
             password: 'test12345',
         });
 
@@ -80,7 +80,7 @@ describe('Get list users controller', async () => {
             expect.objectContaining({
                 id: expect.any(String),
                 name: 'test',
-                email: 'test@test.com',
+                email: 'delivered@resend.dev',
                 role: expect.any(String),
                 created_at: expect.any(String),
             }),

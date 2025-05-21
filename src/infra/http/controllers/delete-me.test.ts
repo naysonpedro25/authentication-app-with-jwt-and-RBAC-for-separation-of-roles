@@ -29,7 +29,7 @@ describe('Delete me user controller', async () => {
             .post('/register')
             .send({
                 name: 'test',
-                email: 'test@test.com',
+                email: 'delivered@resend.dev',
                 password: 'test12345',
             });
         expect(registerUseCaseResponse.status).toEqual(201);
@@ -38,7 +38,7 @@ describe('Delete me user controller', async () => {
                 message: expect.any(String),
             })
         );
-        const user = await userRepository.findByEmail('test@test.com');
+        const user = await userRepository.findByEmail('delivered@resend.dev');
         expect(user).not.toEqual(null);
 
         const validateResp = await supertest(app.server).patch(
@@ -47,7 +47,7 @@ describe('Delete me user controller', async () => {
         expect(validateResp.status).toEqual(200);
 
         const authResponse = await supertest(app.server).post('/auth').send({
-            email: 'test@test.com',
+            email: 'delivered@resend.dev',
             password: 'test12345',
         });
 
@@ -72,7 +72,9 @@ describe('Delete me user controller', async () => {
             });
 
         expect(resp.status).toEqual(200);
-        const isDeletedUser = await userRepository.findByEmail('test@test.com');
+        const isDeletedUser = await userRepository.findByEmail(
+            'delivered@resend.dev'
+        );
         expect(isDeletedUser).toBeNull();
     });
 });

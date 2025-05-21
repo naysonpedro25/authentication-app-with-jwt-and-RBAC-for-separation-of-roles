@@ -5,7 +5,8 @@ import { Resend } from 'resend';
 
 export class ResendEmailService implements EmailService {
     private readonly resend: Resend;
-    private readonly appName = `Gerenciador de usuários <noreplay@${env.EMAIL_DOMAIN}>`;
+    private readonly appName = `Gerenciador de Usuários <noreply@${env.EMAIL_DOMAIN}>`;
+
     constructor() {
         this.resend = new Resend(env.RESEND_EMAIL_SERVICE_API_KEY);
     }
@@ -14,33 +15,43 @@ export class ResendEmailService implements EmailService {
         email: string,
         token: string
     ): Promise<void | SentMessageInfo> {
-        const url = `${env.FRONTEND_URL}/register/forgot-password/change-password?token=${token}`;
+        const url = new URL(env.EMAIL_RESET_PASSWORD_URL);
+        url.searchParams.set('token', token);
         const html = `
-                    <h1>E-mail de validação de conta </h1>
-                    <a href="${url}">Click aqui para poder mudar sua senha.</a>
-                `;
+            <h1>Redefinição de senha</h1>
+            <p>Você solicitou a redefinição de sua senha. Para continuar, clique no link abaixo:</p>
+            <a href="${url.toString()}" target="_blank" rel="noopener noreferrer">Clique aqui para redefinir sua senha</a>
+            <p>Se você não solicitou essa alteração, ignore este e-mail.</p>
+        `;
 
-        const { data, error } = await this.resend.emails.send({
+        const { error } = await this.resend.emails.send({
             from: this.appName,
             to: email,
-            subject: 'Mude sua senha com segurança!',
+            subject: 'Redefina sua senha com segurança',
             html,
         });
+
         if (error) throw error;
     }
+
     async sendVerificationEmailForValidate(
         email: string,
         token: string
     ): Promise<void | SentMessageInfo> {
-        const url = `${env.FRONTEND_URL}/register/email-validated?token=${token}`;
+        const url = new URL(env.EMAIL_VALIDATION_URL);
+        url.searchParams.set('token', token);
+
         const html = `
-            <h1>E-mail de validação de conta </h1>
-            <a href="${url}">Click aqui para poder validar su conta.</a>
+            <h1>Validação de conta</h1>
+            <p>Obrigado por se cadastrar! Para ativar sua conta, clique no link abaixo:</p>
+            <a href="${url.toString()}" target="_blank" rel="noopener noreferrer">Clique aqui para validar seu e-mail</a>
+            <p>Se você não se cadastrou, ignore este e-mail.</p>
         `;
-        const { data, error } = await this.resend.emails.send({
+
+        const { error } = await this.resend.emails.send({
             from: this.appName,
             to: email,
-            subject: 'Comfirme seu e-mail para ativar a conta!',
+            subject: 'Confirme seu e-mail para ativar sua conta',
             html,
         });
 

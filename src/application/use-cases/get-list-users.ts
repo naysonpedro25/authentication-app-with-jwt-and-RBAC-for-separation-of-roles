@@ -7,6 +7,7 @@ interface GetListUserUseCaseRequest {
 
 interface GetListUserUseCaseResponse {
     users: User[];
+    length: number;
 }
 
 export class GetListUserUseCase {
@@ -15,9 +16,10 @@ export class GetListUserUseCase {
         page,
     }: GetListUserUseCaseRequest): Promise<GetListUserUseCaseResponse> {
         const users = await this.userRepository.fetchMany(page);
-
+        const length = await this.userRepository.fetchAllLength();
         return {
             users,
+            length,
         };
     }
 }

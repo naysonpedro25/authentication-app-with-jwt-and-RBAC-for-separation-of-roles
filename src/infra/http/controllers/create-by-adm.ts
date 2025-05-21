@@ -1,8 +1,8 @@
 import { UserAlreadyExistError } from '@/application/use-cases/errors/user-already-exist-error';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
-import { makeRegisterUseCase } from '@/application/use-cases/factory/make-register-use-case';
 import { EmailAlreadySentError } from '@/application/use-cases/errors/email-already-sent-error';
+import { makeCreateUserByAdmUseCase } from '@/application/use-cases/factory/make-create-user-by-adm-use-case';
 
 export async function createByAdm(
     request: FastifyRequest,
@@ -13,13 +13,14 @@ export async function createByAdm(
             name: z.string().max(20),
             email: z.string().email(),
             password: z.string().min(6),
+            role: z.enum(['USER', 'ADMIN']),
         });
 
         const { email, name, password } = createUserBodySchema.parse(
             request.body
         );
 
-        const createUserUseCase = makeRegisterUseCase();
+        const createUserUseCase = makeCreateUserByAdmUseCase();
         await createUserUseCase.execute({ email, name, password });
         return reply.status(201).send();
     } catch (error) {

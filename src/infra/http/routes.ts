@@ -117,8 +117,10 @@ export async function routes(app: FastifyTypedInstance) {
                 tags: ['auth'],
                 description: 'Reset password using token',
                 body: z.object({
-                    token: z.string().uuid(),
                     newPassword: z.string().min(8),
+                }),
+                querystring: z.object({
+                    token: z.string().uuid(),
                 }),
 
                 response: {
@@ -138,9 +140,7 @@ export async function routes(app: FastifyTypedInstance) {
             schema: {
                 tags: ['auth'],
                 description: 'Logout the current user',
-                headers: z.object({
-                    Authorization: z.string(),
-                }),
+
                 response: {
                     200: z.null().describe('User logged out'),
                 },
@@ -161,9 +161,6 @@ export async function routes(app: FastifyTypedInstance) {
                     email: z.string().email(),
                     password: z.string().min(8),
                     role: z.enum(['ADM', 'USER']),
-                }),
-                headers: z.object({
-                    Authorization: z.string(),
                 }),
                 response: {
                     201: z.object({
@@ -206,7 +203,7 @@ export async function routes(app: FastifyTypedInstance) {
                 tags: ['users'],
                 description: 'Get list of all users (paginated)',
                 querystring: z.object({
-                    page: z.coerce.number().optional(),
+                    page: z.coerce.number().min(1),
                 }),
 
                 response: {
@@ -221,6 +218,7 @@ export async function routes(app: FastifyTypedInstance) {
                             })
                         ),
                         page: z.number(),
+                        length: z.number(),
                     }),
                 },
             },
@@ -236,11 +234,8 @@ export async function routes(app: FastifyTypedInstance) {
                 tags: ['users'],
                 description: 'Change password for current user',
                 body: z.object({
-                    currentPassword: z.string(),
+                    password: z.string(),
                     newPassword: z.string().min(6),
-                }),
-                headers: z.object({
-                    Authorization: z.string(),
                 }),
                 response: {
                     200: z.null().describe('Password changed'),
@@ -263,9 +258,6 @@ export async function routes(app: FastifyTypedInstance) {
                 body: z.object({
                     newPassword: z.string().min(8),
                 }),
-                headers: z.object({
-                    Authorization: z.string(),
-                }),
                 response: {
                     200: z.null().describe('Password changed'),
                 },
@@ -282,9 +274,6 @@ export async function routes(app: FastifyTypedInstance) {
                 tags: ['users'],
                 description: 'Delete the current authenticated user',
 
-                headers: z.object({
-                    Authorization: z.string(),
-                }),
                 response: {
                     200: z.null().describe('User deleted'),
                 },
@@ -302,10 +291,6 @@ export async function routes(app: FastifyTypedInstance) {
                 description: 'Delete a user by ID (admin only)',
                 params: z.object({
                     id: z.string().uuid(),
-                }),
-
-                headers: z.object({
-                    Authorization: z.string(),
                 }),
                 response: {
                     200: z.null().describe('User deleted'),

@@ -7,9 +7,11 @@ export interface UserRepositoryInterface {
     fetchMany(page: number): Promise<User[]>;
     delete(userId: string): Promise<User | null>;
     changePassword(userId: string, passwordHash: string): Promise<User>;
+    clearVerificationToken(userId: string): Promise<User>;
     validate(id: string, date: Date): Promise<User>;
     deleteUnverified(): Promise<void>;
     findByToken(token: string): Promise<User | null>;
+    fetchAllLength(): Promise<number>;
     setVerificationToken(
         userId: string,
         token: string,
