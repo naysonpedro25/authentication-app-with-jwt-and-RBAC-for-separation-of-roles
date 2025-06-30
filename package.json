@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start:dev": "tsx --watch src/server.ts",
-    "start:production": "node build/server.cjs",
-    "build": "tsup src/ --out-dir build",
+    "start:production": "node build/server.js",
+    "build": "tsup src/ --out-dir build --format esm",
     "start": "node build/server.cjs",
     "test:crete-prisma-environment": "npm link ./prisma/vitest-environment-prisma",
     "test:install-prisma-environment": "npm link vitest-environment-prisma",

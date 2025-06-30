@@ -37,6 +37,7 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
                 secure: true, // se o cookie vai ser encriptado com o https (se o front estiver usando https, se for local fudeu), impossibilitando o front de pegar o cookie direto como string
                 sameSite: true, // cookie só pode ser acessado dentro do mesmo domínio
                 httpOnly: true, // cookie só pode ser acessado pelo back, sem ser armazenado pelo front nos cookies no browser.
+                domain: '.naysonpedro.me',
             })
             .status(200)
             .send({

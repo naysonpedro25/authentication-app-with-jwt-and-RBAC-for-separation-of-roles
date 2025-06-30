@@ -22,9 +22,9 @@ export const app = fastify().withTypeProvider<ZodTypeProvider>();
 // usar zod para fazer a validação dados de entrada e a serialização dos dados de saida
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
-
+console.log(env.FRONTEND_URL);
 app.register(cors, {
-    origin: [env.FRONTEND_URL, 'http://192.168.1.16:8080'],
+    origin: env.FRONTEND_URL,
     credentials: true, // permite o envio de cookies do front para o back
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 });
