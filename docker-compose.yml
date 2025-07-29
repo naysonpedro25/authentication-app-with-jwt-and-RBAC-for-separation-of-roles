@@ -1,0 +1,11 @@
+---
+services:
+  db:
+    image: bitnami/postgresql:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_USERNAME=docker
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=pg_user_gen

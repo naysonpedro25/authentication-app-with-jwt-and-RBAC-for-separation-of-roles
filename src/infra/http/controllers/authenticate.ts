@@ -47,10 +47,10 @@ export async function authenticate(
 
         return reply
             .setCookie('refreshToken', refreshToken, {
-                path: '/', // quais rotas da aplicação tem acesso ao cookie (todas com o /)
-                secure: true, // se o cookie vai ser encriptado com o https (se o front estiver usando https, se for local fudeu), impossibilitando o front de pegar o cookie direto como string
-                sameSite: true, // cookie só pode ser acessado dentro do mesmo domínio
-                httpOnly: true, // cookie só pode ser acessado pelo back, sem ser armazenado pelo front nos cookies no browser.
+                path: '/',
+                secure: true,
+                sameSite: true,
+                httpOnly: true,
                 domain: '.naysonpedro.me',
             })
             .status(200)
